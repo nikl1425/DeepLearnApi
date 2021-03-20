@@ -1,16 +1,40 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+from flask import Flask, request,jsonify
+from datetime import datetime
+from flask_json import FlaskJSON, JsonError, json_response, as_json
+import json
+from types import SimpleNamespace
 
 
-# Press the green button in the gutter to run the script.
+app = Flask(__name__)
+FlaskJSON(app)
+
+
+def do_the_login():
+    return print("what")
+
+
+
+@app.route('/')
+def hello_world():
+    now = datetime.utcnow()
+    return json_response(time=now)
+
+
+@app.route('/api/modelOne', methods=['POST', 'GET'])
+def login():
+    error = None
+    if request.method == 'POST':
+        print("hi")
+        data = request.get_json()
+        print(data['lastname'])
+        return jsonify(data)
+    else:
+            error = 'Invalid username/password'
+            return print(error)
+    # the code below is executed if the request method
+    # was GET or the credentials were invalid
+
+
+
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+   app.run()
