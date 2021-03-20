@@ -1,12 +1,16 @@
 from flask import Flask, request,jsonify
 from datetime import datetime
 from flask_json import FlaskJSON, JsonError, json_response, as_json
+from flask_cors import CORS
+import json
 import json
 from types import SimpleNamespace
+import pandas as pd
 
 
 app = Flask(__name__)
 FlaskJSON(app)
+
 
 
 def do_the_login():
@@ -26,7 +30,14 @@ def login():
     if request.method == 'POST':
         print("hi")
         data = request.get_json()
-        print(data['lastname'])
+        key_list = [k for k, v in data[0].items()]
+        df = pd.DataFrame(data)
+
+        df.to_csv(r'C:\Users\45535\Desktop\Informatik 3 semester\project\DeepLearnApi\training\export_dataframe.csv', index=False, header=True)
+       # [kv for d in ld for kv in d.items()]
+
+
+
         return jsonify(data)
     else:
             error = 'Invalid username/password'
