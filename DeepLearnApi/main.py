@@ -30,10 +30,12 @@ def login():
     if request.method == 'POST':
         print("hi")
         data = request.get_json()
+
         key_list = [k for k, v in data[0].items()]
+        print(key_list)
         df = pd.DataFrame(data)
 
-        df.to_csv(r'C:\Users\45535\Desktop\Informatik 3 semester\project\DeepLearnApi\training\export_dataframe.csv', index=False, header=True)
+        #df.to_csv(r'C:\Users\45535\Desktop\Informatik 3 semester\project\DeepLearnApi\training\apple_data.csv', index=False, header=True)
        # [kv for d in ld for kv in d.items()]
 
 
