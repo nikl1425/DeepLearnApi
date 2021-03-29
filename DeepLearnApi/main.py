@@ -1,20 +1,13 @@
-from flask import Flask, request,jsonify
+from flask import Flask, request, jsonify
 from datetime import datetime
-from flask_json import FlaskJSON, JsonError, json_response, as_json
-from flask_cors import CORS
-import json
-import json
-from types import SimpleNamespace
+from flask_json import FlaskJSON, json_response
 import pandas as pd
+from flask_restful import Resource, Api
 
-
+# Basic Config:
 app = Flask(__name__)
+api = Api(app)
 FlaskJSON(app)
-
-
-
-def do_the_login():
-    return print("what")
 
 
 
@@ -34,9 +27,10 @@ def login():
         key_list = [k for k, v in data[0].items()]
         print(key_list)
         df = pd.DataFrame(data)
+        print(len(df))
 
-        #df.to_csv(r'C:\Users\45535\Desktop\Informatik 3 semester\project\DeepLearnApi\training\apple_data.csv', index=False, header=True)
-       # [kv for d in ld for kv in d.items()]
+        df.to_csv(r'/Users/niklashjort/Desktop/Projects/DeepLearnApi/DeepLearnApi/training/data/apple_data.csv', index=False, header=True)
+
 
 
 
