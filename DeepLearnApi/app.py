@@ -1,10 +1,11 @@
-from flask import Flask, request, jsonify
+from flask import Flask
 from datetime import datetime
 from flask_json import FlaskJSON, json_response
-import pandas as pd
 from flask_restful import Api
-import time
+from flask_apscheduler import APScheduler
 
+# Config Constants
+one_day_in_seconds = 86400
 
 # Model Objects
 from task_manager import LstmForecast
@@ -13,10 +14,10 @@ from task_manager import LstmForecast
 app = Flask(__name__)
 api = Api(app)
 FlaskJSON(app)
+scheduler = APScheduler()
 
 # routing to ressources
 api.add_resource(LstmForecast, '/api/lstm/<todo_id>')
-
 
 
 @app.route('/')
@@ -25,7 +26,15 @@ def hello_world():
     return json_response(time=now)
 
 
+# Scheduled jobs
+from database import mysql_connector
+
+
+def schedulerTask():
+    mysql_connector.update_apple()
 
 
 if __name__ == '__main__':
-   app.run()
+    scheduler.add_job(id='Shceduled tasks', func=schedulerTask, trigger='interval', seconds=one_day_in_seconds)
+    scheduler.start()
+    app.run()
