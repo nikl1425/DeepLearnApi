@@ -4,6 +4,8 @@ from sqlalchemy import create_engine
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
+# update 08-04
+
 API_KEY = "6a81f55d739d49c2a19610cd4a98e366"
 
 engine = create_engine("mysql+pymysql://{user}:{pw}@localhost/{db}".format(
