@@ -34,7 +34,7 @@ from database import mysql_connector
 
 def schedulerTask():
     # Skal modificeres så den opdatere alle tables og alle modeller
-    mysql_connector.update_apple()
+    mysql_connector.fetch_new_data()
 
 
 if __name__ == '__main__':

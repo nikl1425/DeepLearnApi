@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 
 Base = declarative_base()
 
+
 class StockData(Base):
     __tablename__ = 'stock_data'
 
@@ -21,13 +22,16 @@ class StockData(Base):
             self.id, self.datetime, self.open, self.high, self.low, self.close, self.volume, self.stock_id
         )
 
+
 class StockType(Base):
-    __tablename = 'stock_type'
+    __tablename__ = 'stock_type'
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
     stock_name = Column(String)
 
     def __repr__(self):
-        return "<StockType(id='%s',"
+        return "<StockType(id='%s', name='%s', stock_name='%s')>" % (
+            self.id, self.name, self.stock_name
+        )
 
