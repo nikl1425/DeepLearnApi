@@ -1,5 +1,7 @@
 import pandas as pd
-from sqlalchemy import create_engine
+from database import mysql_connector
+import pandas as pd
+import keras
 
 """
 The main purpose of this class is constructing a parent class for the different model objects.
@@ -7,26 +9,21 @@ task 1: Load models
 task 2: Save models
 """
 
-engine = create_engine("mysql+pymysql://{user}:{pw}@localhost/{db}".format(
-    user="root",
-    pw="Drageild07",
-    db="Lstm"
-))
 
 class Model():
-    def __init__(self, name, database_name):
+    def __init__(self, name):
         self.name = name
-        self.database_name = database_name
-        self.data = pd.DataFrame()
+        self.dataframe = pd.DataFrame()
+        self.model = ""
 
-    def load_data(self, database_name):
-        data_raw = pd.read_sql(database_name, con=engine)
-        data_raw['close'] = data_raw['close'].astype(float)
-        return data_raw
+    def load_data(self):
+        df = mysql_connector.get_specific_stock_to_dataframe(self.name)
+        self.dataframe = pd.DataFrame(df)
 
-    def load_model(self, name):
-        pass
+    def save_model(self, model_object, object_name):
+        model_object.save(f'../h5_file/{object_name}.h5')
+        print(f"model: {object_name} saved!")
 
-
-    def save_model(self, model_object):
-        pass
+    def load_model(self, model_name):
+        reconstructed_model = keras.models.load_model(f'../h5_file/{model_name}.h5')
+        return reconstructed_model

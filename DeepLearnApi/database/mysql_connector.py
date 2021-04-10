@@ -80,19 +80,18 @@ def get_specific_stock_to_dataframe(name):
         id_of_stock = row.id
     # now we query stock_data with the id and select all + pass to pandas dataframe
     data_of_stock = session.query(StockData).filter(StockData.stock_id==id_of_stock)
-    df = pd.DataFrame([(d.id, d.datetime) for d in data_of_stock],
-                      columns=["id", "datetime"])
-    print(df)
+    df = pd.DataFrame([(d.datetime, d.open, d.high, d.low, d.close, d.volume) for d in data_of_stock],
+                      columns=["datetime", "open", "high", "low", "close", "volume"])
+    return df
 
 
+# This function is for the iteration in the cron job
 def get_all_types():
     query = session.query(StockType).all()
     types = []
     for row in query:
-        types.append(row.id)
+        # returns name for get specific_stock_to_dataframe
+        types.append(row.name)
     print(types)
 
 
-
-get_specific_stock_to_dataframe("apple")
-get_all_stock_types()
