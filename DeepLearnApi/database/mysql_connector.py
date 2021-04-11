@@ -95,3 +95,7 @@ def get_all_types():
     print(types)
 
 
+def insert_forecast_data():
+    pass
+
+
