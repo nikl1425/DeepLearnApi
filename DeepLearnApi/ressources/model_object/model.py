@@ -24,6 +24,8 @@ class Model():
         model_object.save(f'../h5_file/{object_name}.h5')
         print(f"model: {object_name} saved!")
 
-    def load_model(self, model_name):
-        reconstructed_model = keras.models.load_model(f'../h5_file/{model_name}.h5')
+    def load_model(self):
+        reconstructed_model = keras.models.load_model(f'../h5_file/{self.name}.h5')
         return reconstructed_model
+
+

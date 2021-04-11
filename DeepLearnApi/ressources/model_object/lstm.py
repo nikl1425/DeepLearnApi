@@ -13,6 +13,8 @@ class lstm(Model):
     def __init__(self, model_name):
         super().__init__(model_name)
         self.model_name = model_name
+        self.forecast_sequence = None
+        self.scaler = None
 
     def reformat_dataframe(self):
         # Load dataset from mySql
@@ -36,13 +38,14 @@ class lstm(Model):
         x = df[['high', 'low', 'close', 'returns', 'log_returns']].values
         # Scale X sequence of data
         scaler = MinMaxScaler(feature_range=(0, 1)).fit(x)
+        self.scaler = scaler
         x_scaled = scaler.transform(x)
         y = [x[2] for x in x_scaled]
         return x_scaled, y
 
     def train_test_split_df(self):
         x, y = self.create_np_array()
-        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.20, shuffle=False)
+        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.10, shuffle=False)
 
         # Since we are working with timeseries data we create batches of sequences to predict next y
         train_gen = TimeseriesGenerator(data=x_train,
@@ -62,9 +65,25 @@ class lstm(Model):
                                        reverse=False,
                                        start_index=0,
                                        end_index=None)
+        self.train_generator = train_gen
+        self.test_generator = test_gen
         return (train_gen, test_gen)
 
-    def define_train__save_model(self):
+
+    # we need to store the sequence that we are going to start our forecast
+    def generate_forecast_sequence(self, test_split_sequence, model):
+        test_predict = model.predict_generator(test_split_sequence)
+        test_predict = np.c_[test_predict,
+                            np.zeros(test_predict.shape),
+                            np.zeros(test_predict.shape),
+                            np.zeros(test_predict.shape),
+                            np.zeros(test_predict.shape)]
+        test_predict = self.scaler.inverse_transform(test_predict)
+        self.forecast_sequence = [element[0] for element in test_predict]
+        print(len(test_predict))
+
+
+    def define_train_save_model(self):
         train_split, test_split = self.train_test_split_df()
         model = Sequential()
         model.add(LSTM(100, activation='relu', input_shape=(3, 5)))
@@ -74,11 +93,20 @@ class lstm(Model):
         model.fit_generator(
             train_split, steps_per_epoch=len(train_split), epochs=1
         )
+        # save the model to h5_file directory
         self.save_model(model, self.model_name)
+        # set forecast sequence to class property
+        self.generate_forecast_sequence(test_split, model)
+        print(self.forecast_sequence)
         print(model.summary())
+
+    def predict_with_model(self):
+        returned_model = self.load_model()
+
 
 
 
 obj = lstm("apple")
+obj.define_train_save_model()
 
 

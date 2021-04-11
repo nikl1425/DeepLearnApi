@@ -35,3 +35,15 @@ class StockType(Base):
             self.id, self.name, self.stock_name
         )
 
+
+class ForecastData(Base):
+    __tablename__ = 'forecast_data'
+
+    id = Column(Integer, primary_key=True)
+    close = Column(Integer)
+    stock_type_id = Column(Integer)
+
+    def __repr__(self):
+        return "<ForecastData(id='%s', close='%s', stock_type_id='%s')>" % (
+            self.id, self.close, self.stock_type_id
+        )
