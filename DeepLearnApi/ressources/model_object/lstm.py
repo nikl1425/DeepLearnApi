@@ -8,6 +8,7 @@ from keras.models import Sequential
 from keras.layers import LSTM, Dense
 
 
+
 class lstm(Model):
     def __init__(self, model_name):
         super().__init__(model_name)
@@ -15,6 +16,8 @@ class lstm(Model):
         self.forecast_sequence = None
         self.thirty_day_forecast = None
         self.scaler = None
+
+
 
     def reformat_dataframe(self):
         # Load dataset from mySql
@@ -161,10 +164,5 @@ class lstm(Model):
         return thirty_days_forecast
 
 
-
-
-
-obj = lstm("apple")
-obj.define_train_save_model()
 
 

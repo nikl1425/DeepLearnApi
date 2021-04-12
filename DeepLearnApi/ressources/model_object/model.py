@@ -21,13 +21,11 @@ class Model:
         self.dataframe = pd.DataFrame(df)
 
     def save_lstm_model(self, model_object, object_name):
-        dir_path = dirname(dirname(abspath(__file__)))
-        print(dir_path)
-        model_object.save(f'../h5_file/lstm_{object_name}.h5')
+        model_object.save(f'ressources/h5_file/lstm_{object_name}.h5')
         print(f"model: {object_name} saved!")
 
     def load_lstm_model(self):
-        reconstructed_model = keras.models.load_model(f'../h5_file/lstm_{self.name}.h5')
+        reconstructed_model = keras.models.load_model(f'ressources/h5_file/lstm_{self.name}.h5')
         return reconstructed_model
 
     def get_id_on_name(self):
