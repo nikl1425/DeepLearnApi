@@ -12,9 +12,9 @@ API_KEY = "6a81f55d739d49c2a19610cd4a98e366"
 # connection engine
 engine = create_engine("mysql+pymysql://{user}:{pw}@localhost/{db}".format(
     user="root",
-    pw="Nvp92agn",
-    db="stock",
-    echo=True  # Logging
+    pw="Drageild07",
+    db="Lstm",
+    echo=True
 ))
 
 # object relation mapping object
@@ -79,7 +79,7 @@ def get_specific_stock_to_dataframe(name):
     for row in query:
         id_of_stock = row.id
     # now we query stock_data with the id and select all + pass to pandas dataframe
-    data_of_stock = session.query(StockData).filter(StockData.stock_id==id_of_stock)
+    data_of_stock = session.query(StockData).filter(StockData.stock_type_id==id_of_stock)
     df = pd.DataFrame([(d.datetime, d.open, d.high, d.low, d.close, d.volume) for d in data_of_stock],
                       columns=["datetime", "open", "high", "low", "close", "volume"])
     return df

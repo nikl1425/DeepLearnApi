@@ -15,10 +15,10 @@ class StockData(Base):
     low = Column(String)
     close = Column(String)
     volume = Column(String)
-    stock_id = Column(Integer)
+    stock_type_id = Column(Integer)
 
     def __repr__(self):
-        return "<Stockdata(id='%s', datetime='%s' open='%s', high='%s', low='%s', close='%s', volume='%s', stock_id='%s')>" % (
+        return "<Stockdata(id='%s', datetime='%s' open='%s', high='%s', low='%s', close='%s', volume='%s', stock_type_id='%s')>" % (
             self.id, self.datetime, self.open, self.high, self.low, self.close, self.volume, self.stock_id
         )
 
