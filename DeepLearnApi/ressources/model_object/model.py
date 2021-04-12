@@ -1,7 +1,7 @@
 import pandas as pd
 from database import mysql_connector
-import pandas as pd
 import keras
+from os.path import dirname, abspath
 
 """
 The main purpose of this class is constructing a parent class for the different model objects.
@@ -10,7 +10,7 @@ task 2: Save models
 """
 
 
-class Model():
+class Model:
     def __init__(self, name):
         self.name = name
         self.dataframe = pd.DataFrame()
@@ -21,6 +21,8 @@ class Model():
         self.dataframe = pd.DataFrame(df)
 
     def save_lstm_model(self, model_object, object_name):
+        dir_path = dirname(dirname(abspath(__file__)))
+        print(dir_path)
         model_object.save(f'../h5_file/lstm_{object_name}.h5')
         print(f"model: {object_name} saved!")
 

@@ -1,4 +1,4 @@
-from model import Model
+from .model import Model
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
@@ -6,7 +6,6 @@ from sklearn.model_selection import train_test_split
 from keras.preprocessing.sequence import TimeseriesGenerator
 from keras.models import Sequential
 from keras.layers import LSTM, Dense
-
 
 
 class lstm(Model):
@@ -70,7 +69,6 @@ class lstm(Model):
         self.test_generator = test_gen
         return (train_gen, test_gen)
 
-
     # we need to store the sequence that we are going to start our forecast
     def generate_forecast_sequence(self, test_split_sequence, model):
         test_predict = model.predict_generator(test_split_sequence)
@@ -79,7 +77,6 @@ class lstm(Model):
         test_predict = self.scaler.inverse_transform(test_predict)
         self.forecast_sequence = [element[0] for element in test_predict]
         print(len(test_predict))
-
 
     def define_train_save_model(self):
         train_split, test_split = self.train_test_split_df()

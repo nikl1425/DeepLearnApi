@@ -59,7 +59,7 @@ def fetch_new_data():
                               low=element['low'],
                               close=element['close'],
                               volume=element['volume'],
-                              stock_id=stock_id)
+                              stock_type_id=stock_id)
                 ])
                 session.commit()
         except ValueError:
@@ -98,6 +98,7 @@ def get_all_types():
         # returns name for get specific_stock_to_dataframe
         types.append(row.name)
     print(types)
+    return types
 
 
 def get_stock_id_based_on_name(name):
@@ -114,4 +115,4 @@ def insert_row_into_forecast(close_value, stock_type_id):
     session.commit()
     print("inserted: %s : %s - into forecast-table" %(close_value, stock_type_id))
 
-delete_from_forecast_on_typeid(1)
+get_all_types()

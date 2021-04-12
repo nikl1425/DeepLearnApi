@@ -3,6 +3,8 @@ from datetime import datetime
 from flask_json import FlaskJSON, json_response
 from flask_restful import Api
 from flask_apscheduler import APScheduler
+from ressources.model_object.lstm import lstm
+
 
 # update 08-04
 
@@ -22,7 +24,7 @@ scheduler = APScheduler()
 api.add_resource(LstmForecast, '/api/lstm/<todo_id>')
 
 
-@app.route('/')
+@app.route('/hi')
 def hello_world():
     now = datetime.utcnow()
     return json_response(time=now)
@@ -35,9 +37,14 @@ from database import mysql_connector
 def schedulerTask():
     # Skal modificeres så den opdatere alle tables og alle modeller
     mysql_connector.fetch_new_data()
+    # get all stock names
+    all_stock_names = mysql_connector.get_all_types()
+    my_model = lstm("apple")
+    my_model.define_train_save_model()
+    # for all in stock_names create LSTM and run define_train_test
 
 
 if __name__ == '__main__':
-    scheduler.add_job(id='Shceduled tasks', func=schedulerTask, trigger='interval', seconds=one_day_in_seconds)
+    scheduler.add_job(id='Shceduled tasks', func=schedulerTask, trigger='interval', days=1, next_run_time=datetime.now())
     scheduler.start()
     app.run()
