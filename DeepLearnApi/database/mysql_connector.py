@@ -4,7 +4,7 @@ from sqlalchemy import create_engine, insert
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from sqlalchemy.orm import sessionmaker
-from database.db_orm_obj import StockData, StockType
+from database.db_orm_obj import StockData, StockType, ForecastData
 
 # API fetch key
 API_KEY = "6a81f55d739d49c2a19610cd4a98e366"
@@ -72,6 +72,11 @@ def truncate_stock_data():
         con.execute('truncate stock_data')
 
 
+def delete_from_forecast_on_typeid(id):
+    with engine.connect() as con:
+        con.execute('delete from forecast_data where stock_type_id=%s' %(id))
+
+
 # This function returns a dataframe based of stock type name
 def get_specific_stock_to_dataframe(name):
     id_of_stock = ""
@@ -95,7 +100,18 @@ def get_all_types():
     print(types)
 
 
-def insert_forecast_data():
-    pass
+def get_stock_id_based_on_name(name):
+    stock_type_id = None
+    for type_id, in session.query(StockType.id).\
+            filter_by(name=name):
+                stock_type_id = type_id
+    return stock_type_id
 
 
+def insert_row_into_forecast(close_value, stock_type_id):
+    row = ForecastData(close=close_value, stock_type_id=stock_type_id)
+    session.add(row)
+    session.commit()
+    print("inserted: %s : %s - into forecast-table" %(close_value, stock_type_id))
+
+delete_from_forecast_on_typeid(1)

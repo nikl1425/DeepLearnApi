@@ -51,7 +51,7 @@ class lstm(Model):
         # Since we are working with timeseries data we create batches of sequences to predict next y
         train_gen = TimeseriesGenerator(data=x_train,
                                         targets=y_train,
-                                        length=3,
+                                        length=5,
                                         batch_size=1,
                                         shuffle=False,
                                         reverse=False,
@@ -59,7 +59,7 @@ class lstm(Model):
                                         end_index=None)
         test_gen = TimeseriesGenerator(x_test,
                                        y_test,
-                                       length=3,
+                                       length=5,
                                        sampling_rate=1,
                                        batch_size=1,
                                        shuffle=False,
@@ -84,12 +84,12 @@ class lstm(Model):
     def define_train_save_model(self):
         train_split, test_split = self.train_test_split_df()
         model = Sequential()
-        model.add(LSTM(100, activation='relu', input_shape=(3, 2)))
+        model.add(LSTM(100, activation='relu', input_shape=(5, 2)))
         model.add(Dense(72, activation='relu'))
         model.add(Dense(1))
         model.compile(loss="mean_squared_error", optimizer="adam")
         model.fit_generator(
-            train_split, steps_per_epoch=len(train_split), epochs=5
+            train_split, steps_per_epoch=len(train_split), epochs=1
         )
         # save the model to h5_file directory
         self.save_lstm_model(model, self.model_name)
@@ -105,10 +105,21 @@ class lstm(Model):
         returned_model.compile(loss="mean_squared_error", optimizer="adam")
 
         # autoregression function:
+        # the method below adds a 30 forecast to forecast property on object
         self.autoregression_predict(returned_model)
 
-
         # save to sql
+
+        # 1. get the id of this stock
+        this_stock_id = self.get_id_on_name()
+        # delete current forecast
+        self.delete_current_forecast(this_stock_id)
+        # insert new forecast
+        for row in self.thirty_day_forecast:
+            self.insert_forecast(row, this_stock_id)
+
+
+
         print("success")
         print(returned_model)
         print(sequence)
@@ -130,8 +141,8 @@ class lstm(Model):
             log_return_val = forecast.log_returns
             entry_val = forecast[['close', 'log_returns']].values
 
-            entry_close = close_values[-3:]
-            entry_log = log_return_val[-3:]
+            entry_close = close_values[-5:]
+            entry_log = log_return_val[-5:]
             entry_df = {'close': entry_close, 'log_return': entry_log}
             entry_df = pd.DataFrame(entry_df)
             scaler = MinMaxScaler(feature_range=(0,1)).fit(entry_df)
