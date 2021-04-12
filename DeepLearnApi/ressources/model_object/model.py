@@ -20,12 +20,12 @@ class Model():
         df = mysql_connector.get_specific_stock_to_dataframe(self.name)
         self.dataframe = pd.DataFrame(df)
 
-    def save_model(self, model_object, object_name):
-        model_object.save(f'../h5_file/{object_name}.h5')
+    def save_lstm_model(self, model_object, object_name):
+        model_object.save(f'../h5_file/lstm_{object_name}.h5')
         print(f"model: {object_name} saved!")
 
-    def load_model(self):
-        reconstructed_model = keras.models.load_model(f'../h5_file/{self.name}.h5')
+    def load_lstm_model(self):
+        reconstructed_model = keras.models.load_model(f'../h5_file/lstm_{self.name}.h5')
         return reconstructed_model
 
 
