@@ -1,16 +1,18 @@
 from flask_restful import Resource
+from database import mysql_connector
+from flask_json import FlaskJSON, json_response
 
 
-LSTM = {
-    'todo1': {'task': 'build an API'},
-    'todo2': {'task': '?????'},
-    'todo3': {'task': 'profit!'},
+lstm_task = {
+    'apple': {'task': 'return apple forecast'},
+    'microsoft': {'task': 'return microsoft forecast'},
+    'google': {'task': 'return google forecast'},
 }
 
 
 class LstmForecast(Resource):
     def get(self, todo_id):
+        stock_type_id = mysql_connector.get_stock_id_based_on_name(todo_id)
+        data = mysql_connector.get_forecast_based_on_id(stock_type_id)
 
-        #put in mapping logic for task list
-
-        return LSTM[todo_id]
+        return json_response(status_=200, server_name='flask_deep', available=True, data=data, other_id_task=lstm_task)

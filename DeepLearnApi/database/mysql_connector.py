@@ -115,4 +115,14 @@ def insert_row_into_forecast(close_value, stock_type_id):
     session.commit()
     print("inserted: %s : %s - into forecast-table" %(close_value, stock_type_id))
 
-get_all_types()
+def get_forecast_based_on_id(stock_id):
+    data = session.query(ForecastData.close).filter_by(stock_type_id=stock_id)
+    forecast_data = []
+    for row in data:
+        forecast_data.append(row.close)
+    print(len(forecast_data))
+    return forecast_data
+
+
+
+get_forecast_based_on_id(1)

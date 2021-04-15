@@ -1,7 +1,8 @@
 import pandas as pd
 from database import mysql_connector
-import keras
-from os.path import dirname, abspath
+import tensorflow.keras as keras
+
+
 
 """
 The main purpose of this class is constructing a parent class for the different model objects.
@@ -21,11 +22,11 @@ class Model:
         self.dataframe = pd.DataFrame(df)
 
     def save_lstm_model(self, model_object, object_name):
-        model_object.save(f'ressources/h5_file/lstm_{object_name}.h5')
+        model_object.save(f'machine_learning/h5_file/lstm_{object_name}.h5')
         print(f"model: {object_name} saved!")
 
     def load_lstm_model(self):
-        reconstructed_model = keras.models.load_model(f'ressources/h5_file/lstm_{self.name}.h5')
+        reconstructed_model = keras.models.load_model(f'machine_learning/h5_file/lstm_{self.name}.h5')
         return reconstructed_model
 
     def get_id_on_name(self):
