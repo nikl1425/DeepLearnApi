@@ -9,12 +9,33 @@ from database.db_orm_obj import StockData, StockType, ForecastData
 # API fetch key
 API_KEY = "6a81f55d739d49c2a19610cd4a98e366"
 
-# connection engine
+""" OLD:
 engine = create_engine("mysql+pymysql://{user}:{pw}@localhost/{db}".format(
     user="root",
     pw="Drageild07",
     db="Lstm",
-    echo=True
+    echo=True,
+    pool_recycle=280
+))
+
+engine = create_engine("mysql+mysqlconnector://{user}:{pw}@{host}/{db}".format(
+    user="niklasHjort",
+    pw="Nvp92agn",
+    host="niklasHjort.mysql.pythonanywhere-services.com",
+    db="StockApi",
+    echo=True,
+    pool_recycle=280
+))
+"""
+
+# connection engine
+engine = create_engine("mysql+pymysql://{user}:{pw}@{host}/{db}".format(
+    user="niklasHjort",
+    pw="Nvp92agn",
+    host="niklasHjort.mysql.pythonanywhere-services.com",
+    db="niklasHjort$StockApi",
+    echo=True,
+    pool_recycle=280
 ))
 
 # object relation mapping object
