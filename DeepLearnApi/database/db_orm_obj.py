@@ -8,7 +8,7 @@ Base = declarative_base()
 class StockData(Base):
     __tablename__ = 'stock_data'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     datetime = Column(String)
     open = Column(String)
     high = Column(String)

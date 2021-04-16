@@ -18,25 +18,27 @@ engine = create_engine("mysql+pymysql://{user}:{pw}@localhost/{db}".format(
     pool_recycle=280
 ))
 
-engine = create_engine("mysql+mysqlconnector://{user}:{pw}@{host}/{db}".format(
-    user="niklasHjort",
+engine = create_engine("mysql+pymysql://{user}:{pw}@{host}/{db}".format(
+    user="root",
     pw="Nvp92agn",
-    host="niklasHjort.mysql.pythonanywhere-services.com",
-    db="StockApi",
+    host="35.242.209.129",
+    db="NiklasRest",
     echo=True,
     pool_recycle=280
+))
 ))
 """
 
 # connection engine
 engine = create_engine("mysql+pymysql://{user}:{pw}@{host}/{db}".format(
-    user="niklasHjort",
+    user="root",
     pw="Nvp92agn",
-    host="niklasHjort.mysql.pythonanywhere-services.com",
-    db="niklasHjort$StockApi",
+    host="35.242.209.129",
+    db="NiklasRest",
     echo=True,
     pool_recycle=280
 ))
+
 
 # object relation mapping object
 stock_data = StockData
@@ -55,6 +57,7 @@ def get_all_stock_types():
         stock_id = row.id
         stock_name = row.stock_name
         dict_stock_names.update([(f"{stock_name}", stock_id)])
+    print("got all types:  " + str(result))
     return dict_stock_names
 
 
@@ -72,6 +75,7 @@ def fetch_new_data():
             data = requests.get(
                 f"https://api.twelvedata.com/time_series?symbol={stock_name}&interval=1day&type=stock&format=JSON&start_date={start_date}%{close_time}&end_date={end_date}%{close_time}&apikey={API_KEY}")
             data = data.json()
+            print("FETCHED SUCCES")
             for element in data["values"]:
                 session.add_all([
                     StockData(datetime=element['datetime'],
@@ -83,14 +87,28 @@ def fetch_new_data():
                               stock_type_id=stock_id)
                 ])
                 session.commit()
+            print("inserted")
         except ValueError:
             print("something went wrong" + str(ValueError))
 
+
+def insert_one():
+    session.add_all([StockData(
+        datetime="hej",
+        open="test",
+        close="test",
+        high="test",
+        low="test",
+        volume="test",
+        stock_type_id=1
+    )])
+    session.commit()
 
 # this function truncates stock_data
 def truncate_stock_data():
     with engine.connect() as con:
         con.execute('truncate stock_data')
+    print("truncated stock_data")
 
 
 def delete_from_forecast_on_typeid(id):
@@ -143,7 +161,3 @@ def get_forecast_based_on_id(stock_id):
         forecast_data.append(row.close)
     print(len(forecast_data))
     return forecast_data
-
-
-
-get_forecast_based_on_id(1)
