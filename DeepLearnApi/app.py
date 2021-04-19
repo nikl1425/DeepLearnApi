@@ -45,9 +45,10 @@ def schedulerTask():
       model_object = lstm(str(name))
       model_object.define_train_save_model()
 
+scheduler.add_job(id='Shceduled tasks', func=schedulerTask, trigger='interval', days=1, next_run_time=datetime.now())
+scheduler.start()
 
 if __name__ == '__main__':
-    scheduler.add_job(id='Shceduled tasks', func=schedulerTask, trigger='interval', days=1, next_run_time=datetime.now())
-    scheduler.start()
 
-    app.run(threaded=False, debug=False)
+
+    app.run(threaded=True, debug=True)

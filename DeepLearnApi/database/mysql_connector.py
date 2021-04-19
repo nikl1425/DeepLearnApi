@@ -66,29 +66,29 @@ def fetch_new_data():
     start_date = (datetime.now() - relativedelta(years=14)).strftime("%Y-%m-%d")
     end_date = datetime.today().strftime("%Y-%m-%d")
     close_time = "2021:24:00"
-    truncate_stock_data()
-    for key, value in get_all_stock_types().items():
-        stock_name = key
-        stock_id = value
-        # fetch and pass to data var based on stock name, then we make it json
-        try:
+    try:
+        truncate_stock_data()
+        for key, value in get_all_stock_types().items():
+            stock_name = key
+            stock_id = value
+            # fetch and pass to data var based on stock name, then we make it json
             data = requests.get(
-                f"https://api.twelvedata.com/time_series?symbol={stock_name}&interval=1day&type=stock&format=JSON&start_date={start_date}%{close_time}&end_date={end_date}%{close_time}&apikey={API_KEY}")
+            f"https://api.twelvedata.com/time_series?symbol={stock_name}&interval=1day&type=stock&format=JSON&start_date={start_date}%{close_time}&end_date={end_date}%{close_time}&apikey={API_KEY}")
             data = data.json()
             print("FETCHED SUCCES")
             for element in data["values"]:
                 session.add_all([
                     StockData(datetime=element['datetime'],
-                              open=element['open'],
-                              high=element['high'],
-                              low=element['low'],
-                              close=element['close'],
-                              volume=element['volume'],
-                              stock_type_id=stock_id)
-                ])
+                                open=element['open'],
+                                high=element['high'],
+                                low=element['low'],
+                                close=element['close'],
+                                volume=element['volume'],
+                                stock_type_id=stock_id)
+                    ])
                 session.commit()
             print("inserted")
-        except ValueError:
+    except ValueError:
             print("something went wrong" + str(ValueError))
 
 
