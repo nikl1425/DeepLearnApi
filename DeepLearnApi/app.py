@@ -41,9 +41,9 @@ def schedulerTask():
     all_stock_names = mysql_connector.get_all_types()
     # initialize
     # for all in stock_names create LSTM and run define_train_test
-    #for name in all_stock_names:
-      #model_object = lstm(str(name))
-      #model_object.define_train_save_model()
+    for name in all_stock_names:
+      model_object = lstm(str(name))
+      model_object.define_train_save_model()
 
 
 if __name__ == '__main__':
