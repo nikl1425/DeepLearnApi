@@ -1,1 +1,4 @@
+# [START runtime]
 runtime: python37
+env: flex
+entrypoint: gunicorn -b :$PORT mysite.wsgi
