@@ -5,6 +5,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from sqlalchemy.orm import sessionmaker
 from database.db_orm_obj import StockData, StockType, ForecastData
+import logging as log
 
 # API fetch key
 API_KEY = "6a81f55d739d49c2a19610cd4a98e366"
@@ -46,53 +47,59 @@ stock_type = StockType
 
 # session towards the database
 Session = sessionmaker(bind=engine)
-session = Session()
+
 
 
 # get all types of stock we want to fetch
 def get_all_stock_types():
+    session = Session()
     dict_stock_names = {}
     result = session.query(stock_type).all()
     for row in result:
         stock_id = row.id
         stock_name = row.stock_name
         dict_stock_names.update([(f"{stock_name}", stock_id)])
+    log.info("got all types:  " + str(result))
     print("got all types:  " + str(result))
     return dict_stock_names
 
 
 # This function truncate stock_data and insert new values
 def fetch_new_data():
+    session = Session()
     start_date = (datetime.now() - relativedelta(years=14)).strftime("%Y-%m-%d")
     end_date = datetime.today().strftime("%Y-%m-%d")
     close_time = "2021:24:00"
-    try:
-        truncate_stock_data()
-        for key, value in get_all_stock_types().items():
-            stock_name = key
-            stock_id = value
-            # fetch and pass to data var based on stock name, then we make it json
-            data = requests.get(
-            f"https://api.twelvedata.com/time_series?symbol={stock_name}&interval=1day&type=stock&format=JSON&start_date={start_date}%{close_time}&end_date={end_date}%{close_time}&apikey={API_KEY}")
-            data = data.json()
-            print("FETCHED SUCCES")
-            for element in data["values"]:
-                session.add_all([
+    truncate_stock_data()
+    for key, value in get_all_stock_types().items():
+        stock_name = key
+        stock_id = value
+        print(stock_id)
+        # fetch and pass to data var based on stock name, then we make it json
+        data = requests.get(
+                f"https://api.twelvedata.com/time_series?symbol={stock_name}&interval=1day&type=stock&format=JSON&start_date={start_date}%{close_time}&end_date={end_date}%{close_time}&apikey={API_KEY}")
+        data = data.json()
+        print("FETCHED SUCCES")
+        #print(data['values'])
+        for element in data["values"]:
+            session.add_all([
                     StockData(datetime=element['datetime'],
                                 open=element['open'],
                                 high=element['high'],
                                 low=element['low'],
                                 close=element['close'],
                                 volume=element['volume'],
-                                stock_type_id=stock_id)
+                                stock_type_id=str(stock_id))
                     ])
-                session.commit()
-            print("inserted")
-    except ValueError:
-            print("something went wrong" + str(ValueError))
+            session.commit()
+        print("inserted")
+        log.info("inserted")
+
+
 
 
 def insert_one():
+    session = Session()
     session.add_all([StockData(
         datetime="hej",
         open="test",
@@ -109,6 +116,7 @@ def truncate_stock_data():
     with engine.connect() as con:
         con.execute('truncate stock_data')
     print("truncated stock_data")
+    log.info("truncated stock_data")
 
 
 def delete_from_forecast_on_typeid(id):
@@ -118,6 +126,7 @@ def delete_from_forecast_on_typeid(id):
 
 # This function returns a dataframe based of stock type name
 def get_specific_stock_to_dataframe(name):
+    session = Session()
     id_of_stock = ""
     query = session.query(StockType).filter(StockType.name.like(name))
     for row in query:
@@ -131,6 +140,7 @@ def get_specific_stock_to_dataframe(name):
 
 # This function is for the iteration in the cron job
 def get_all_types():
+    session = Session()
     query = session.query(StockType).all()
     types = []
     for row in query:
@@ -141,6 +151,7 @@ def get_all_types():
 
 
 def get_stock_id_based_on_name(name):
+    session = Session()
     stock_type_id = None
     for type_id, in session.query(StockType.id).\
             filter_by(name=name):
@@ -149,15 +160,19 @@ def get_stock_id_based_on_name(name):
 
 
 def insert_row_into_forecast(close_value, stock_type_id):
+    session = Session()
     row = ForecastData(close=close_value, stock_type_id=stock_type_id)
     session.add(row)
     session.commit()
     print("inserted: %s : %s - into forecast-table" %(close_value, stock_type_id))
+    log.info("inserted: %s : %s - into forecast-table" %(close_value, stock_type_id))
 
 def get_forecast_based_on_id(stock_id):
+    session = Session()
     data = session.query(ForecastData.close).filter_by(stock_type_id=stock_id)
     forecast_data = []
     for row in data:
         forecast_data.append(row.close)
+    log.info(len(forecast_data))
     print(len(forecast_data))
     return forecast_data

@@ -3,6 +3,7 @@ from database import mysql_connector
 from flask_json import FlaskJSON, json_response
 
 
+
 lstm_task = {
     'apple': {'task': 'return apple forecast'},
     'microsoft': {'task': 'return microsoft forecast'},
