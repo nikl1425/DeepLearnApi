@@ -9,4 +9,4 @@ resources:
     memory_gb: 6
     disk_size_gb: 20
 
-entrypoint: gunicorn -b :$PORT app:app
+entrypoint: gunicorn --timeout 6000 -b :$PORT app:app
